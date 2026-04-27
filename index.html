@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStore Ltd. | Inventory System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { background-color: var(--bg); color: var(--text-dark); line-height: 1.6; }
+
+        /* Navigation */
+        nav {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h1 { font-size: 1.5rem; font-weight: 700; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .nav-links button:hover { background: rgba(255,255,255,0.1); }
+
+        /* Container */
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+
+        .section { display: none; background: var(--card); padding: 2rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { margin-bottom: 1.5rem; color: var(--primary); font-weight: 700; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+
+        /* Table Styles */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 8px; outline: none;
+        }
+        input:focus { border-color: var(--primary); ring: 2px solid var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { background: var(--bg); color: var(--text-light); text-align: left; padding: 1rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); }
+        tr:hover { background-color: #f8fafc; }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+
+        /* Badge Styles */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: #dbeafe; color: #1e40af; }
+
+        /* Modal / Feedback */
+        #message { position: fixed; bottom: 20px; right: 20px; padding: 1rem 2rem; border-radius: 8px; color: white; display: none; z-index: 1000; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>SmartStore <span style="font-weight: 300;">Inventory</span></h1>
+    <div class="nav-links">
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('addPage')">Add Product</button>
+        <button onclick="showSection('updatePage')">Update/Remove</button>
+    </div>
+</nav>
+
+<div class="container">
+    
+    <div id="dashboard" class="section active">
+        <h2>Product Inventory</h2>
+        <div class="search-bar">
+            <input type="text" id="globalSearch" placeholder="Search by Product ID or Name..." onkeyup="displayProducts()">
+            <button class="btn btn-primary" onclick="displayProducts()">Search</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total Value</th>
+                    </tr>
+                </thead>
+                <tbody id="productBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="addPage" class="section">
+        <h2>Add New Product</h2>
+        <form id="addForm">
+            <label>Product ID</label>
+            <input type="text" id="pId" placeholder="e.g. P101" required>
+            <label>Product Name</label>
+            <input type="text" id="pName" placeholder="e.g. Wireless Mouse" required>
+            <label>Category</label>
+            <select id="pCat">
+                <option value="Electronics">Electronics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Stationery">Stationery</option>
+            </select>
+            <label>Quantity</label>
+            <input type="number" id="pQty" min="1" placeholder="Quantity" required>
+            <label>Price ($)</label>
+            <input type="number" id="pPrice" min="0.01" step="0.01" placeholder="Price" required>
+            <button type="button" class="btn btn-primary" onclick="addProduct()">Add to Inventory</button>
+        </form>
+    </div>
+
+    <div id="updatePage" class="section">
+        <h2>Manage Product Stock</h2>
+        <div class="search-bar">
+            <input type="text" id="searchUpdateId" placeholder="Enter Product ID to find...">
+            <button class="btn btn-primary" onclick="searchForUpdate()">Lookup Product</button>
+        </div>
+
+        <div id="editFields" style="display: none; background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--primary);">
+            <h3 id="editTitle" style="margin-bottom:1rem">Editing: </h3>
+            <label>Update Quantity</label>
+            <input type="number" id="upQty" min="0">
+            <label>Update Price ($)</label>
+            <input type="number" id="upPrice" min="0" step="0.01">
+            <div style="display:flex; gap: 10px;">
+                <button class="btn btn-success" onclick="updateProduct()">Save Changes</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete Product</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="message"></div>
+
+<script>
+    // In-memory data store
+    let inventory = [
+        { id: "P001", name: "Laptop Pro", category: "Electronics", qty: 10, price: 1200 },
+        { id: "P002", name: "Office Chair", category: "Furniture", qty: 25, price: 150 },
+        { id: "P003", name: "Notebook", category: "Stationery", qty: 100, price: 5 }
+    ];
+
+    let currentEditingId = null;
+
+    // Navigation logic
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        if(sectionId === 'dashboard') displayProducts();
+    }
+
+    // Display Logic
+    function displayProducts() {
+        const tbody = document.getElementById('productBody');
+        const searchTerm = document.getElementById('globalSearch').value.toLowerCase();
+        tbody.innerHTML = '';
+
+        const filtered = inventory.filter(p => 
+            p.id.toLowerCase().includes(searchTerm) || 
+            p.name.toLowerCase().includes(searchTerm)
+        );
+
+        filtered.forEach(p => {
+            const row = `<tr>
+                <td><span class="badge">${p.id}</span></td>
+                <td>${p.name}</td>
+                <td>${p.category}</td>
+                <td>${p.qty}</td>
+                <td>$${parseFloat(p.price).toFixed(2)}</td>
+                <td>$${(p.qty * p.price).toFixed(2)}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Add Logic
+    function addProduct() {
+        const id = document.getElementById('pId').value.trim();
+        const name = document.getElementById('pName').value.trim();
+        const cat = document.getElementById('pCat').value;
+        const qty = parseInt(document.getElementById('pQty').value);
+        const price = parseFloat(document.getElementById('pPrice').value);
+
+        if(!id || !name || isNaN(qty) || isNaN(price)) {
+            showMessage("Please fill all fields correctly", "var(--danger)");
+            return;
+        }
+
+        if(inventory.some(p => p.id === id)) {
+            showMessage("Error: Product ID already exists!", "var(--danger)");
+            return;
+        }
+
+        inventory.push({ id, name, category: cat, qty, price });
+        showMessage("Product added successfully!", "var(--success)");
+        document.getElementById('addForm').reset();
+        showSection('dashboard');
+    }
+
+    // Search for Update/Delete
+    function searchForUpdate() {
+        const id = document.getElementById('searchUpdateId').value.trim();
+        const product = inventory.find(p => p.id === id);
+
+        if(product) {
+            currentEditingId = id;
+            document.getElementById('editFields').style.display = 'block';
+            document.getElementById('editTitle').innerText = `Editing: ${product.name}`;
+            document.getElementById('upQty').value = product.qty;
+            document.getElementById('upPrice').value = product.price;
+        } else {
+            showMessage("Product not found!", "var(--danger)");
+            document.getElementById('editFields').style.display = 'none';
+        }
+    }
+
+    // Update Logic
+    function updateProduct() {
+        const product = inventory.find(p => p.id === currentEditingId);
+        const newQty = parseInt(document.getElementById('upQty').value);
+        const newPrice = parseFloat(document.getElementById('upPrice').value);
+
+        if(newQty < 0 || newPrice < 0) {
+            showMessage("Numbers must be positive", "var(--danger)");
+            return;
+        }
+
+        product.qty = newQty;
+        product.price = newPrice;
+        showMessage("Stock updated!", "var(--success)");
+        showSection('dashboard');
+    }
+
+    // Delete Logic
+    function confirmDelete() {
+        if(confirm(`Are you sure you want to delete ${currentEditingId}?`)) {
+            inventory = inventory.filter(p => p.id !== currentEditingId);
+            showMessage("Product removed successfully", "var(--danger)");
+            document.getElementById('editFields').style.display = 'none';
+            document.getElementById('searchUpdateId').value = '';
+            displayProducts();
+        }
+    }
+
+    // Feedback Utility
+    function showMessage(text, color) {
+        const msg = document.getElementById('message');
+        msg.innerText = text;
+        msg.style.backgroundColor = color;
+        msg.style.display = 'block';
+        setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    }
+
+    // Initialize
+    window.onload = displayProducts;
+</script>
+</body>
+</html>
