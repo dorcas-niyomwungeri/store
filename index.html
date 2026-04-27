@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartStore Pro | Enterprise Inventory</title>
+    <link rel="icon" type="image/png" href="c:\Users\USER1\Downloads\Desc_Softlab_Logo-removebg-preview.png">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --brand: #6366f1;
-            --brand-dark: #4f46e5;
+            --brand-soft: #eef2ff;
             --surface: #ffffff;
             --background: #f8fafc;
             --text-main: #0f172a;
@@ -18,27 +19,44 @@
             --danger: #ef4444;
             --border: #e2e8f0;
             --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body { background-color: var(--background); color: var(--text-main); display: flex; min-height: 100vh; }
 
-        /* Sidebar Navigation */
+        /* --- SIDEBAR WITH LOGO --- */
         aside {
-            width: 260px;
+            width: 280px;
             background: var(--surface);
             border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
             position: fixed;
             height: 100vh;
+            z-index: 100;
         }
 
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.25rem; color: var(--brand); }
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 0.5rem 2rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        /* LOGO STYLING */
+        .company-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--brand-soft);
+        }
+
+        .brand-name { font-size: 1.2rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
 
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
 
@@ -50,200 +68,155 @@
             align-items: center;
             gap: 12px;
             color: var(--text-muted);
-            font-weight: 500;
-            transition: all 0.2s ease;
+            font-weight: 600;
+            transition: 0.2s;
         }
 
         .nav-item:hover { background: #f1f5f9; color: var(--brand); }
-        .nav-item.active { background: var(--brand); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+        .nav-item.active { background: var(--brand); color: white; }
 
-        /* Main Content */
-        main { flex: 1; margin-left: 260px; padding: 2.5rem; }
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; margin-left: 280px; padding: 2rem 3rem; }
 
-        .view { display: none; max-width: 1100px; margin: 0 auto; }
-        .view.active { display: block; animation: slideUp 0.4s ease-out; }
+        .view { display: none; max-width: 1200px; }
+        .view.active { display: block; animation: fadeIn 0.4s ease; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        header { margin-bottom: 2.5rem; }
-        header h1 { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.025em; }
-        header p { color: var(--text-muted); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        
+        /* --- STATS --- */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .stat-val { font-size: 1.75rem; font-weight: 700; margin-top: 5px; }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .stat-label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem; }
+        /* --- TABLE & INPUTS --- */
+        .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { text-align: left; padding: 1rem; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 
-        /* Controls Area */
-        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; }
-        .search-wrapper { position: relative; flex: 1; }
-        .search-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 40px; border: 1px solid var(--border); border-radius: 10px; outline: none; transition: 0.2s; }
-        .search-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .input-field { 
+            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; 
+            margin-bottom: 1.25rem; outline: none; transition: 0.2s;
+        }
+        .input-field:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
 
-        /* Modern Table */
-        .table-container { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f8fafc; padding: 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-        td { padding: 1.25rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9375rem; }
-        tr:last-child td { border-bottom: none; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-        .badge-id { background: #eef2ff; color: var(--brand); }
-
-        /* Forms */
-        .form-card { max-width: 600px; background: var(--surface); padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 0.8rem 1.5rem; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9375rem; }
+        .btn { 
+            padding: 0.75rem 1.5rem; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; 
+            display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
         .btn-primary { background: var(--brand); color: white; }
-        .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); }
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Notifications */
-        #toast { position: fixed; top: 24px; right: 24px; padding: 1rem 1.5rem; border-radius: 10px; color: white; font-weight: 600; display: none; z-index: 1000; animation: fadeInRight 0.3s ease; }
-        @keyframes fadeInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        #toast { position: fixed; top: 20px; right: 20px; padding: 1rem 2rem; border-radius: 8px; color: white; display: none; z-index: 1000; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <aside>
-        <div class="logo">
-            <i data-lucide="package"></i>
-            <span>SmartStore Pro</span>
+        <div class="brand-section">
+            <img src="c:\Users\USER1\Downloads\Desc_Softlab_Logo-removebg-preview.png" alt="Logo" class="company-logo">
+            <span class="brand-name">SmartStore<span style="color:var(--brand)">.</span></span>
         </div>
+        
         <ul class="nav-menu">
-            <li class="nav-item active" onclick="app.switchView('dashboard')">
-                <i data-lucide="layout-dashboard"></i> Dashboard
-            </li>
-            <li class="nav-item" onclick="app.switchView('add')">
-                <i data-lucide="plus-circle"></i> Add Product
-            </li>
-            <li class="nav-item" onclick="app.switchView('manage')">
-                <i data-lucide="settings"></i> Manage Stock
-            </li>
+            <li class="nav-item active" onclick="router.go('dashboard')"><i data-lucide="layout-grid"></i> Dashboard</li>
+            <li class="nav-item" onclick="router.go('add')"><i data-lucide="package-plus"></i> Add Product</li>
+            <li class="nav-item" onclick="router.go('manage')"><i data-lucide="settings-2"></i> Manage Stock</li>
         </ul>
     </aside>
 
     <main>
         <div id="view-dashboard" class="view active">
-            <header>
-                <h1>Inventory Overview</h1>
-                <p>Monitor and track your real-time stock levels</p>
-            </header>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total SKUs</div>
-                    <div class="stat-value" id="stat-skus">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Inventory Value</div>
-                    <div class="stat-value" id="stat-value">$0.00</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Low Stock Alerts</div>
-                    <div class="stat-value" style="color: var(--danger)" id="stat-low">0</div>
+            <div class="header-flex">
+                <div>
+                    <h1 style="font-size: 2rem;">Inventory Hub</h1>
+                    <p style="color: var(--text-muted);">Real-time monitoring of SmartStore Ltd. assets</p>
                 </div>
             </div>
 
-            <div class="table-controls">
-                <div class="search-wrapper">
-                    <i data-lucide="search" size="18"></i>
-                    <input type="text" class="search-input" id="globalSearch" placeholder="Filter by Name, ID or Category..." onkeyup="app.renderTable()">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">ACTIVE SKUs</p>
+                    <div class="stat-val" id="count-sku">0</div>
+                </div>
+                <div class="stat-card">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">TOTAL VALUATION</p>
+                    <div class="stat-val" id="total-val">$0.00</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--danger);">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">LOW STOCK</p>
+                    <div class="stat-val" style="color: var(--danger)" id="low-val">0</div>
                 </div>
             </div>
 
-            <div class="table-container">
+            <div class="card">
+                <div style="position: relative; margin-bottom: 1rem;">
+                    <input type="text" class="input-field" id="tableSearch" placeholder="Search product ID or Name..." onkeyup="app.drawTable()" style="margin-bottom:0">
+                </div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Product ID</th>
+                            <th>ID</th>
                             <th>Product Name</th>
                             <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
+                            <th>Stock</th>
+                            <th>Price</th>
                             <th>Total</th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryBody"></tbody>
+                    <tbody id="inventoryList"></tbody>
                 </table>
             </div>
         </div>
 
         <div id="view-add" class="view">
-            <header>
-                <h1>New Inventory Item</h1>
-                <p>Register a new product into the system</p>
-            </header>
-            <div class="form-card">
-                <form id="productForm">
-                    <div class="form-group">
-                        <label>Unique Product ID</label>
-                        <input type="text" id="p_id" class="search-input" style="padding-left:12px" placeholder="SKU-1001">
+            <h1 style="margin-bottom: 2rem;">Register New Asset</h1>
+            <div class="card" style="max-width: 600px;">
+                <label style="font-weight: 600; font-size: 0.85rem;">PRODUCT ID</label>
+                <input type="text" id="in-id" class="input-field" placeholder="e.g. ELEC-404">
+                
+                <label style="font-weight: 600; font-size: 0.85rem;">FULL NAME</label>
+                <input type="text" id="in-name" class="input-field" placeholder="e.g. Wireless Keyboard">
+                
+                <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-weight: 600; font-size: 0.85rem;">QUANTITY</label>
+                        <input type="number" id="in-qty" class="input-field">
                     </div>
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" id="p_name" class="search-input" style="padding-left:12px" placeholder="MacBook Pro M3">
+                    <div style="flex: 1;">
+                        <label style="font-weight: 600; font-size: 0.85rem;">PRICE ($)</label>
+                        <input type="number" id="in-price" class="input-field" step="0.01">
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select id="p_cat" class="search-input" style="padding-left:12px">
-                                <option value="Electronics">Electronics</option>
-                                <option value="Hardware">Hardware</option>
-                                <option value="Apparel">Apparel</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Initial Quantity</label>
-                            <input type="number" id="p_qty" class="search-input" style="padding-left:12px" placeholder="0">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Unit Price ($)</label>
-                        <input type="number" id="p_price" step="0.01" class="search-input" style="padding-left:12px" placeholder="0.00">
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="app.handleAddition()">
-                        <i data-lucide="save"></i> Save Product
-                    </button>
-                </form>
+                </div>
+                
+                <button class="btn btn-primary" onclick="app.addItem()"><i data-lucide="plus"></i> Create Record</button>
             </div>
         </div>
 
         <div id="view-manage" class="view">
-            <header>
-                <h1>Manage Inventory</h1>
-                <p>Search, update, or remove existing products</p>
-            </header>
-            <div class="form-card" style="margin-bottom: 2rem;">
-                <div class="form-group">
-                    <label>Enter Product ID to Edit</label>
-                    <div style="display:flex; gap:10px">
-                        <input type="text" id="manageSearchId" class="search-input" style="padding-left:12px" placeholder="Enter ID...">
-                        <button class="btn btn-primary" onclick="app.findForEdit()">Find</button>
-                    </div>
+            <h1 style="margin-bottom: 2rem;">Stock Management</h1>
+            <div class="card" style="max-width: 600px; margin-bottom: 2rem;">
+                <label>Enter ID to Lookup</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="lookupId" class="input-field" style="margin-bottom:0">
+                    <button class="btn btn-primary" onclick="app.find()">Find</button>
                 </div>
             </div>
 
-            <div id="editZone" class="form-card" style="display:none; border-top: 4px solid var(--brand);">
-                <h3 id="editLabel" style="margin-bottom:1.5rem"></h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>Update Quantity</label>
-                        <input type="number" id="u_qty" class="search-input" style="padding-left:12px">
-                    </div>
-                    <div class="form-group">
-                        <label>Update Price ($)</label>
-                        <input type="number" id="u_price" step="0.01" class="search-input" style="padding-left:12px">
-                    </div>
-                </div>
-                <div style="display:flex; justify-content: space-between; margin-top:1rem">
-                    <button class="btn btn-primary" onclick="app.handleUpdate()">Apply Changes</button>
-                    <button class="btn btn-danger" onclick="app.handleDelete()">
-                        <i data-lucide="trash-2"></i> Delete SKU
-                    </button>
+            <div id="editBox" class="card" style="display: none; max-width: 600px; border-top: 4px solid var(--brand);">
+                <h3 id="editNameDisplay" style="margin-bottom: 1.5rem;"></h3>
+                <label>Update Stock</label>
+                <input type="number" id="up-qty" class="input-field">
+                <label>Update Price ($)</label>
+                <input type="number" id="up-price" class="input-field">
+                
+                <div style="display: flex; justify-content: space-between;">
+                    <button class="btn btn-primary" onclick="app.saveUpdate()">Save Changes</button>
+                    <button class="btn btn-danger" onclick="app.deleteItem()">Delete Product</button>
                 </div>
             </div>
         </div>
@@ -252,154 +225,111 @@
     <div id="toast"></div>
 
     <script>
-        // --- DATA LAYER (Inventory Manager Class) ---
-        class InventoryManager {
-            constructor() {
-                this.data = [
-                    { id: "ELE-01", name: "Sony Headphones", category: "Electronics", qty: 15, price: 299 },
-                    { id: "FUR-99", name: "Gaming Desk", category: "Hardware", qty: 4, price: 450 },
-                    { id: "APP-05", name: "Brand Hoodie", category: "Apparel", qty: 50, price: 45 }
-                ];
-            }
+        // DATA STORE
+        let store = [
+            {id: 'P-101', name: 'Ultra Monitor', cat: 'Electronics', qty: 12, price: 350},
+            {id: 'P-102', name: 'Ergo Desk', cat: 'Furniture', qty: 3, price: 890},
+            {id: 'P-103', name: 'Type-C Cable', cat: 'Electronics', qty: 45, price: 15}
+        ];
 
-            add(product) {
-                if (this.data.find(p => p.id === product.id)) throw "ID already exists";
-                this.data.push(product);
-            }
+        let activeTargetId = null;
 
-            update(id, newQty, newPrice) {
-                const index = this.data.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    this.data[index].qty = newQty;
-                    this.data[index].price = newPrice;
-                }
-            }
-
-            delete(id) {
-                this.data = this.data.filter(p => p.id !== id);
-            }
-
-            calculateTotal() {
-                return this.data.reduce((sum, p) => sum + (p.qty * p.price), 0);
-            }
-        }
-
-        // --- UI LAYER (App Logic) ---
+        // CORE LOGIC
         const app = {
-            manager: new InventoryManager(),
-            currentId: null,
-
-            init() {
-                lucide.createIcons();
-                this.renderTable();
+            drawTable() {
+                const list = document.getElementById('inventoryList');
+                const filter = document.getElementById('tableSearch').value.toLowerCase();
+                list.innerHTML = '';
+                
+                let filtered = store.filter(p => p.id.toLowerCase().includes(filter) || p.name.toLowerCase().includes(filter));
+                
+                filtered.forEach(p => {
+                    list.innerHTML += `
+                        <tr>
+                            <td><b style="color:var(--brand)">${p.id}</b></td>
+                            <td>${p.name}</td>
+                            <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:0.7rem">${p.cat || 'General'}</span></td>
+                            <td>${p.qty}</td>
+                            <td>$${p.price.toFixed(2)}</td>
+                            <td><b>$${(p.qty * p.price).toFixed(2)}</b></td>
+                        </tr>
+                    `;
+                });
                 this.updateStats();
             },
 
-            switchView(viewName) {
-                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                
-                document.getElementById(`view-${viewName}`).classList.add('active');
-                event.currentTarget.classList.add('active');
-                
-                if(viewName === 'dashboard') {
-                    this.renderTable();
-                    this.updateStats();
-                }
-            },
-
-            renderTable() {
-                const query = document.getElementById('globalSearch').value.toLowerCase();
-                const tbody = document.getElementById('inventoryBody');
-                tbody.innerHTML = '';
-
-                const filtered = this.manager.data.filter(p => 
-                    p.name.toLowerCase().includes(query) || 
-                    p.id.toLowerCase().includes(query) ||
-                    p.category.toLowerCase().includes(query)
-                );
-
-                filtered.forEach(p => {
-                    const row = `<tr>
-                        <td><span class="badge badge-id">${p.id}</span></td>
-                        <td style="font-weight:600">${p.name}</td>
-                        <td>${p.category}</td>
-                        <td><span style="color: ${p.qty < 5 ? 'var(--danger)' : 'inherit'}">${p.qty}</span></td>
-                        <td>$${p.price.toFixed(2)}</td>
-                        <td style="font-weight:700">$${(p.qty * p.price).toFixed(2)}</td>
-                    </tr>`;
-                    tbody.innerHTML += row;
-                });
-            },
-
             updateStats() {
-                document.getElementById('stat-skus').innerText = this.manager.data.length;
-                document.getElementById('stat-value').innerText = `$${this.manager.calculateTotal().toLocaleString()}`;
-                document.getElementById('stat-low').innerText = this.manager.data.filter(p => p.qty < 5).length;
+                document.getElementById('count-sku').innerText = store.length;
+                let total = store.reduce((sum, p) => sum + (p.qty * p.price), 0);
+                document.getElementById('total-val').innerText = `$${total.toLocaleString()}`;
+                document.getElementById('low-val').innerText = store.filter(p => p.qty < 5).length;
             },
 
-            handleAddition() {
-                try {
-                    const id = document.getElementById('p_id').value.trim();
-                    const name = document.getElementById('p_name').value.trim();
-                    const cat = document.getElementById('p_cat').value;
-                    const qty = parseInt(document.getElementById('p_qty').value);
-                    const price = parseFloat(document.getElementById('p_price').value);
+            addItem() {
+                const id = document.getElementById('in-id').value.trim();
+                const name = document.getElementById('in-name').value.trim();
+                const qty = parseInt(document.getElementById('in-qty').value);
+                const price = parseFloat(document.getElementById('in-price').value);
 
-                    if (!id || !name || isNaN(qty) || isNaN(price)) throw "All fields are required";
-                    if (qty < 0 || price < 0) throw "Values must be positive";
+                if(!id || !name || isNaN(qty) || isNaN(price)) return this.notify("Please complete all fields", "var(--danger)");
+                if(store.some(p => p.id === id)) return this.notify("Product ID already exists!", "var(--danger)");
 
-                    this.manager.add({ id, name, category: cat, qty, price });
-                    this.notify("Product Registered Successfully", "var(--success)");
-                    document.getElementById('productForm').reset();
-                } catch (err) {
-                    this.notify(err, "var(--danger)");
-                }
+                store.push({id, name, qty, price, cat: 'Electronics'});
+                this.notify("Product Added Successfully", "var(--success)");
+                router.go('dashboard');
             },
 
-            findForEdit() {
-                const id = document.getElementById('manageSearchId').value.trim();
-                const product = this.manager.data.find(p => p.id === id);
-
-                if (product) {
-                    this.currentId = id;
-                    document.getElementById('editZone').style.display = 'block';
-                    document.getElementById('editLabel').innerText = `Modifying: ${product.name}`;
-                    document.getElementById('u_qty').value = product.qty;
-                    document.getElementById('u_price').value = product.price;
+            find() {
+                const id = document.getElementById('lookupId').value.trim();
+                const p = store.find(x => x.id === id);
+                if(p) {
+                    activeTargetId = id;
+                    document.getElementById('editBox').style.display = 'block';
+                    document.getElementById('editNameDisplay').innerText = `Edit ${p.name}`;
+                    document.getElementById('up-qty').value = p.qty;
+                    document.getElementById('up-price').value = p.price;
                 } else {
                     this.notify("SKU not found", "var(--danger)");
-                    document.getElementById('editZone').style.display = 'none';
                 }
             },
 
-            handleUpdate() {
-                const q = parseInt(document.getElementById('u_qty').value);
-                const p = parseFloat(document.getElementById('u_price').value);
-                this.manager.update(this.currentId, q, p);
-                this.notify("Product metrics updated", "var(--brand)");
-                this.switchView('dashboard');
+            saveUpdate() {
+                const p = store.find(x => x.id === activeTargetId);
+                p.qty = parseInt(document.getElementById('up-qty').value);
+                p.price = parseFloat(document.getElementById('up-price').value);
+                this.notify("Updated Successfully", "var(--brand)");
+                router.go('dashboard');
             },
 
-            handleDelete() {
-                if(confirm("Permanent Action: Are you sure you want to delete this record?")) {
-                    this.manager.delete(this.currentId);
-                    this.notify("SKU deleted from registry", "var(--danger)");
-                    document.getElementById('editZone').style.display = 'none';
-                    this.switchView('dashboard');
+            deleteItem() {
+                if(confirm("Delete this product permanently?")) {
+                    store = store.filter(x => x.id !== activeTargetId);
+                    this.notify("Record Deleted", "var(--danger)");
+                    document.getElementById('editBox').style.display = 'none';
+                    router.go('dashboard');
                 }
             },
 
             notify(msg, color) {
-                const toast = document.getElementById('toast');
-                toast.innerText = msg;
-                toast.style.backgroundColor = color;
-                toast.style.display = 'block';
-                setTimeout(() => toast.style.display = 'none', 3000);
+                const t = document.getElementById('toast');
+                t.innerText = msg; t.style.backgroundColor = color;
+                t.style.display = 'block';
+                setTimeout(() => t.style.display = 'none', 3000);
             }
         };
 
-        app.init();
+        // NAVIGATION
+        const router = {
+            go(v) {
+                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${v}`).classList.add('active');
+                event.currentTarget.classList.add('active');
+                if(v === 'dashboard') app.drawTable();
+            }
+        };
+
+        window.onload = () => { lucide.createIcons(); app.drawTable(); };
     </script>
 </body>
 </html>
